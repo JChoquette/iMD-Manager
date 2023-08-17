@@ -10,6 +10,7 @@ import {ImportMenu} from "./ImportMenu";
 import {ExportMenu} from "./ExportMenu";
 import {WorkflowForMenu} from "./Library";
 import {WorkflowTitle} from "./ComponentJSON";
+import {LiveProjectSettings} from "./LiveProjectView";
 
 export class MessageBox extends React.Component{
     render(){
@@ -494,11 +495,13 @@ class WorkflowGridMenuUnconnected extends React.Component{
             i++;
         }
         return(
-            <div class="home-tabs" id="home-tabs">
-                <ul>
-                    {tab_li}
-                </ul>
-                {tabs}
+            <div class="project-menu">
+                <div class="home-tabs" id="home-tabs">
+                    <ul>
+                        {tab_li}
+                    </ul>
+                    {tabs}
+                </div>
             </div>
         );
         
@@ -787,6 +790,7 @@ export class ProjectEditMenu extends React.Component{
                         </div>
                     </div>
                 </div>
+                {this.getLiveProjectSettings()}
                 <div class="action-bar">
                     {this.getActions()}
                 </div>
@@ -920,6 +924,17 @@ export class ProjectEditMenu extends React.Component{
             </button>
         );
         return actions;
+    }
+
+    getLiveProjectSettings(){
+        if(this.props.data.renderer.user_role==Constants.role_keys.teacher){
+            return (
+                <div>
+                    <LiveProjectSettings renderer={this.props.renderer} role={"teacher"} objectID={this.state.id} view_type={"settings"} updateLiveProject={this.props.actionFunction}/>
+                </div>
+            );
+        }
+        return null;
     }
 
     componentDidMount(){

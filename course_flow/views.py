@@ -1294,28 +1294,23 @@ class ProjectDetailView(LoginRequiredMixin, UserCanViewMixin, DetailView):
             )
             .decode("utf-8")
         )
-        # context["read_only"] = JSONRenderer().render(True).decode("utf-8")
-        # context["comment"] = JSONRenderer().render(False).decode("utf-8")
-        # editor = (
-        #     project.author == self.request.user
-        #     or ObjectPermission.objects.filter(
-        #         user=self.request.user,
-        #         project=project,
-        #         permission_type=ObjectPermission.PERMISSION_EDIT,
-        #     ).count()
-        #     > 0
-        # )
-        # if editor:
-        #     context["read_only"] = JSONRenderer().render(False).decode("utf-8")
-        # elif (
-        #     ObjectPermission.objects.filter(
-        #         user=self.request.user,
-        #         permission_type=ObjectPermission.PERMISSION_COMMENT,
-        #         project=project,
-        #     ).count()
-        #     > 0
-        # ):
-        #     context["comment"] = JSONRenderer().render(True).decode("utf-8")
+        if hasattr(project, "liveproject") and project.liveproject is not None:
+            context["user_role"] = (
+                JSONRenderer()
+                .render(get_user_role(project.liveproject, self.request.user))
+                .decode("utf-8")
+            )
+        else:
+            context["user_role"] = (
+                JSONRenderer()
+                .render(LiveProjectUser.ROLE_NONE)
+                .decode("utf-8")
+            )
+        context["user_permission"] = (
+            JSONRenderer()
+            .render(get_user_permission(project, self.request.user))
+            .decode("utf-8")
+        )
 
         return context
 
@@ -6028,7 +6023,12 @@ def my_live_projects_view(request):
 def make_project_live(request: HttpRequest) -> HttpResponse:
     project = Project.objects.get(pk=request.POST.get("projectPk"))
     try:
-        LiveProject.objects.create(project=project)
+        liveproject = LiveProject.objects.create(project=project)
+        LiveProjectUser.objects.create(
+            liveproject=liveproject,
+            user=request.user,
+            role_type=LiveProjectUser.ROLE_TEACHER,
+        )
     except AttributeError:
         return JsonResponse({"action": "error"})
     return JsonResponse(
@@ -6251,7 +6251,11 @@ def get_live_project_data(request: HttpRequest) -> HttpResponse:
                 ).data,
             }
         elif data_type == "students":
-            data_package = {"data": "Hello world!"}
+            data_package = {
+                "liveproject": LiveProjectSerializer(
+                    liveproject, context={"user": request.user}
+                ).data
+            }
         elif data_type == "assignments":
             data_package = {
                 "workflows": InfoBoxSerializer(
@@ -6285,7 +6289,11 @@ def get_live_project_data(request: HttpRequest) -> HttpResponse:
                 "workflows_not_added": workflows_not_added,
             }
         elif data_type == "settings":
-            data_package = {"data": "Hello world!"}
+            data_package = {
+                "liveproject": LiveProjectSerializer(
+                    liveproject, context={"user": request.user}
+                ).data
+            }
         else:
             raise AttributeError
 
@@ -6627,6 +6635,7 @@ def set_workflow_visibility(request: HttpRequest) -> HttpResponse:
         response = JsonResponse({"action": "error"})
         response.status_code = 403
         return response
+    print(liveproject.visible_workflows.filter(pk=workflow.pk))
     return JsonResponse(
         {
             "action": "posted",

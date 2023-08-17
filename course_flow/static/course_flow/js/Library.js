@@ -2,7 +2,8 @@ import * as Redux from "redux";
 import * as React from "react";
 import * as reactDom from "react-dom";
 import {Provider, connect} from "react-redux";
-import {getLibrary, getFavourites, getHome, getWorkflowsForProject, searchAllObjects, getDisciplines, toggleFavourite, getUsersForObject, duplicateBaseItem, makeProjectLive, deleteSelf, restoreSelf} from "./PostFunctions";
+import {getLibrary, getFavourites, getHome, getWorkflowsForProject, searchAllObjects, getDisciplines, toggleFavourite, getUsersForObject, duplicateBaseItem, makeProjectLive, deleteSelf, restoreSelf, setWorkflowVisibility} from "./PostFunctions";
+import * as LiveProjectViews from "./LiveProjectView";
 import * as Constants from "./Constants";
 import {WorkflowTitle, Component, TitleText, CollapsibleText} from "./ComponentJSON";
 import {MessageBox, renderMessageBox, closeMessageBox} from "./MenuComponents";
@@ -194,14 +195,14 @@ retrieved it will display them in a workflowfilter.
 export class ProjectMenu extends LibraryMenu{
     constructor(props){
         super(props);
-        this.state={data:props.data};
+        this.state={data:props.data,view_type:"workflows"};
     }
 
     render(){
         return (
             <div class="project-menu">
                 {this.getHeader()}
-                <WorkflowFilter renderer={this.props.renderer} workflows={this.state.workflow_data} context="project"/>
+                {this.getContent()}
                 {reactDom.createPortal(
                     this.getOverflowLinks(),
                     $("#overflow-links")[0]
@@ -222,6 +223,60 @@ export class ProjectMenu extends LibraryMenu{
         );
     }
 
+    getViewButtons(){
+        return [
+            {type:"workflows",name:gettext("Workflows")},
+            {type:"overview",name:gettext("Classroom Overview")},
+            {type:"students",name:gettext("Students")},
+            {type:"assignments",name:gettext("Assignments")},
+            {type:"completion_table",name:gettext("Completion Table")},
+            // {type:"settings",name:gettext("Classroom Settings")},
+        ];
+    }
+
+    getContent(){
+        let return_val = [];
+        if(this.state.data.liveproject && this.props.renderer.user_role==Constants.role_keys.teacher)return_val.push(
+            <div class="workflow-view-select hide-print">
+            {this.getViewButtons().map(
+                (item)=>{
+                    let view_class = "hover-shade";
+                    if(item.type==this.state.view_type)view_class += " active";
+                    return <a id={"button_"+item.type} class={view_class} onClick = {this.changeView.bind(this,item.type)}>{item.name}</a>;
+                }
+            )}
+            </div>
+        );
+        switch(this.state.view_type){
+            case "overview":
+                return_val.push(<LiveProjectViews.LiveProjectOverview renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                break;
+            case "students":
+                return_val.push(<LiveProjectViews.LiveProjectStudents renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                break;
+            case "assignments":
+                return_val.push(<LiveProjectViews.LiveProjectAssignments renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                break;
+            case "completion_table":
+                return_val.push(<LiveProjectViews.LiveProjectCompletionTable renderer={this.props.renderer} role={this.getRole()} objectID={this.props.data.id} view_type={this.state.view_type}/>);
+                break;
+            // case "settings":
+            //     return_val.push(<LiveProjectViews.LiveProjectSettings updateLiveProject={this.updateFunction.bind(this)} renderer={this.props.renderer} role={this.getRole()} liveproject={this.state.liveproject} objectID={this.props.project.id} view_type={this.state.view_type}/>);
+            //     break;
+            default:
+                return_val.push(<WorkflowFilter renderer={this.props.renderer} workflows={this.state.workflow_data} updateWorkflow={this.updateWorkflow.bind(this)} context="project"/>);
+        }
+        return return_val;
+    }
+
+    changeView(view_type){
+        this.setState({view_type:view_type});
+    }
+
+    getRole(){
+        return "teacher";
+    }
+
     getOverflowLinks(){
         let data = this.state.data;
         let liveproject;
@@ -238,33 +293,33 @@ export class ProjectMenu extends LibraryMenu{
         }
 
         let overflow_links=[liveproject];
-        if(data.author_id==user_id){
-            overflow_links.push(<hr/>);
-            overflow_links.push(this.getDeleteProject());
-        }
-        overflow_links.push(this.getExportButton());
-        overflow_links.push(this.getCopyButton());
-        overflow_links.push(<hr/>);
         overflow_links.push(
             <a id="comparison-view" class="hover-shade" href="comparison">
                 {gettext("Workflow comparison tool")}
             </a>
         );
+        overflow_links.push(<hr/>);
+        overflow_links.push(this.getExportButton());
+        overflow_links.push(this.getCopyButton());
+        if(data.author_id==user_id){
+            overflow_links.push(<hr/>);
+            overflow_links.push(this.getDeleteProject());
+        }
         return overflow_links;
     }
 
     getDeleteProject(){
         if(!this.state.data.deleted)return (
             <div class="hover-shade" onClick={this.deleteProject.bind(this)}>
-                <div>{gettext("Archive Project")}</div>
+                <div>{gettext("Archive project")}</div>
             </div>
         )
         else return([
             <div class="hover-shade" onClick={this.restoreProject.bind(this)}>
-                <div>{gettext("Restore Project")}</div>
+                <div>{gettext("Restore project")}</div>
             </div>,
             <div class="hover-shade" onClick={this.deleteProjectHard.bind(this)}>
-                <div>{gettext("Permanently Delete Project")}</div>
+                <div>{gettext("Permanently delete project")}</div>
             </div>
         ])
     }
@@ -298,7 +353,8 @@ export class ProjectMenu extends LibraryMenu{
         let component = this;
         if(window.confirm(gettext("Are you sure you want to create a live classroom for this project?"))){
             makeProjectLive(this.props.data.id,(data)=>{
-                window.location = update_path.liveproject.replace("0",component.props.data.id);
+                //window.location = update_path.liveproject.replace("0",component.props.data.id);
+                location.reload();
             });
         }
     }
@@ -381,7 +437,7 @@ export class ProjectMenu extends LibraryMenu{
         let commenters = this.state.users.commentors;
         let viewers = this.state.users.viewers;
         if(!author)return null;
-        let users = [
+        let users_group = [
             <div class="user-name">
                 {Constants.getUserTag("author")}{Constants.getUserDisplay(author)}
             </div>,
@@ -400,14 +456,19 @@ export class ProjectMenu extends LibraryMenu{
                     {Constants.getUserTag("view")}{Constants.getUserDisplay(user)}
                 </div>
             ),
-        ]
+        ];
         if(this.state.users.published){
-            users.push(
+            users_group.push(
                 <div class="user-name">
                     {Constants.getUserTag("view")}<span class="material-symbols-rounded">public</span> {gettext("All CourseFlow")}
                 </div>
             );
         }
+        let users = [
+            <div class="users-group">
+                {users_group}
+            </div>
+        ];
         if(!this.props.renderer.read_only)users.push(
             <div class="user-name collapsed-text-show-more" onClick={this.openShareMenu.bind(this)}>
                 {gettext("Modify")}
@@ -425,7 +486,7 @@ export class ProjectMenu extends LibraryMenu{
 
     openEditMenu(){
         let data = this.state.data;
-        renderMessageBox({...data,all_disciplines:this.props.renderer.all_disciplines},"project_edit_menu",this.updateFunction.bind(this));
+        renderMessageBox({...data,all_disciplines:this.props.renderer.all_disciplines,renderer:this.props.renderer},"project_edit_menu",this.updateFunction.bind(this));
     }
 
     getCreate(){
@@ -445,9 +506,13 @@ export class ProjectMenu extends LibraryMenu{
     }
 
     updateFunction(new_data){
-        let new_state={...this.state};
-        new_state.data={...new_state.data,...new_data};
-        this.setState(new_state);
+        if(new_data.liveproject){
+            console.log("liveproject updated");
+        }else{
+            let new_state={...this.state};
+            new_state.data={...new_state.data,...new_data};
+            this.setState(new_state);
+        }
     }
 
     getShare(){
@@ -463,6 +528,19 @@ export class ProjectMenu extends LibraryMenu{
             closeMessageBox();
             component.getUserData();
         });
+    }
+
+
+    updateWorkflow(id,new_values){
+        for(let i=0;i<this.state.workflow_data.length;i++){
+            if(this.state.workflow_data[i].id==id){
+                let new_state = {...this.state};
+                new_state.workflow_data = [...this.state.workflow_data];
+                new_state.workflow_data[i] = {...this.state.workflow_data[i],...new_values};
+                this.setState(new_state);
+                break;
+            }
+        }
     }
 }
 
@@ -505,7 +583,7 @@ export class WorkflowFilter extends Component{
         else{
             workflows=this.sortWorkflows(this.filterWorkflows(this.state.workflows));
             workflows = workflows.map(workflow=>
-                <WorkflowForMenu key={workflow.type+workflow.id} workflow_data={workflow} context={this.props.context}/>
+                <WorkflowForMenu renderer={this.props.renderer} key={workflow.type+workflow.id} workflow_data={workflow} context={this.props.context} updateWorkflow={this.props.updateWorkflow}/>
             );
         } 
         let search_results=this.state.search_results.map(workflow=>
@@ -704,6 +782,7 @@ export class WorkflowFilter extends Component{
     defaultRender(){
         return (<renderers.WorkflowLoader/>);
     }
+
 }
 
 /*
@@ -1072,6 +1151,7 @@ export class WorkflowForMenu extends React.Component{
             <div ref={this.maindiv} class={css_class} onClick={this.clickAction.bind(this)} onMouseDown={(evt)=>{evt.preventDefault()}}>
                 <div class="workflow-top-row">
                     <WorkflowTitle no_hyperlink={this.props.no_hyperlink} class_name="workflow-title" data={data}/>
+                    {this.getVisible()}
                     {this.getTypeIndicator()}
                 </div>
                 <div class="workflow-created">
@@ -1143,6 +1223,27 @@ export class WorkflowForMenu extends React.Component{
         }else{
             window.location.href=update_path[this.props.workflow_data.type].replace("0",this.props.workflow_data.id);
         }
+    }
+
+    getVisible(){
+        let component=this;
+        if(this.props.renderer && !this.props.renderer.read_only && this.props.renderer.user_role==Constants.role_keys.teacher && this.props.workflow_data.type!="project" && this.props.workflow_data.type!="liveproject" && this.props.renderer && this.props.renderer.user_role==Constants.role_keys.teacher)return (
+            <div class="permission-select" onClick={(evt)=>evt.stopPropagation()} onMouseDown={(evt)=>evt.stopPropagation()}>
+                <select value={this.props.workflow_data.is_visible} onChange={(evt)=>component.visibilityFunction(this.props.workflow_data.id,evt.target.value)}>
+                    <option value={"false"}>{gettext("Not Visible")}</option>
+                    <option value={"true"}>{gettext("Visible")}</option>
+                </select>
+            </div>
+        );
+        return null;
+    }
+
+    visibilityFunction(id,is_visible){
+        if(is_visible=="true")is_visible=true;
+        else is_visible = false;
+        this.props.updateWorkflow(id,{is_visible:is_visible})
+        setWorkflowVisibility(this.props.renderer.project_data.id,id,is_visible);
+        console.log("visibility changed");
     }
 }
 
