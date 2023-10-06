@@ -1,5 +1,5 @@
 :root {
-  --mdc-theme-primary: #04ba74;
+  --mdc-theme-primary: #00d2b5;
   --mdc-theme-secondary: #46c443;
 }
 
@@ -20,7 +20,7 @@ hr{
 }
 
 h1{
-    color:#04ba74;
+    color:#00d2b5;
     
 }
 
@@ -30,7 +30,7 @@ h2{
 }
 
 h3{
-    /*color:#04ba74;*/
+    /*color:#00d2b5;*/
     color: #444444;
 }
 
@@ -39,12 +39,12 @@ h4{
     margin-bottom:5px;
     color: #444444;
     font-weight: 600;
-    /*color:#04ba74;*/
+    /*color:#00d2b5;*/
 }
 h5{
     margin-top:8px;
     margin-bottom:8px;
-    color:#04ba74;
+    color:#00d2b5;
 }
 
 h4.drag-and-drop::after, h3.drag-and-drop::after{
@@ -141,7 +141,7 @@ button{
 }
 
 .primary-button{
-    background: #04BA74;
+    background: #00d2b5;
     color: white;
     padding: 8px;
     box-sizing: border-box;
@@ -157,7 +157,7 @@ button{
 }
 
 .primary-button.disabled, .primary-button:disabled, .secondary-button.disabled, .secondary-button:disabled{
-    background: #04BA74;
+    background: #00d2b5;
     color: grey;
     background: #E9EBF2;
 }
@@ -203,7 +203,7 @@ button:hover{
 }
 
 .material-symbols-rounded.green, .material-symbols-outlined.green{
-    color: #04ba74;
+    color: #00d2b5;
 }
 
 .material-symbols-rounded.red, .material-symbols-outlined.red{
@@ -294,7 +294,7 @@ button:hover{
 
 #update-notifications{
     position: relative;
-    background: #EEFFF8;
+    background: #f0fefe;
     margin: 0px 15px 15px 15px;
 }
 
@@ -326,7 +326,7 @@ button:hover{
     width:100%;
     font-family:'Open Sans',sans-serif;
     align-items: center;
-    background: #EEFFF8;
+    background: #f0fefe;
     box-sizing: border-box;
 }
 
@@ -391,7 +391,7 @@ button:hover{
 
 #visible-icons{
     display: flex;
-    color: #04BA74;
+    color: #00d2b5;
     gap: 20px;
 }
 
@@ -645,7 +645,7 @@ button:hover{
 .left-panel-toggle{
     width: 24px;
     height: 24px;
-    background: #04ba74;
+    background: #00d2b5;
     border-radius: 50%;
     position: absolute;
     right: -10px;
@@ -699,10 +699,10 @@ button:hover{
 }
 
 .panel-item.active{
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 .panel-favourite.active{
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 
 .panel-item > img, .panel-item .material-symbols-rounded{
@@ -813,8 +813,8 @@ button:hover{
 }
 
 .home-tabs .ui-tabs-active{
-    background:#04ba74;
-    border:1px solid #04ba74;
+    background:#00d2b5;
+    border:1px solid #00d2b5;
     color:white;
 }
 
@@ -840,7 +840,7 @@ button:hover{
 
 .menu-create{
     padding:8px;
-    background:#04ba74;
+    background:#00d2b5;
     color:white;
     display:block;
     border-radius:5px;
@@ -883,7 +883,7 @@ button:hover{
     height: 16px;
     width: 16px;
     border-radius: 12px;
-    background-color: #04BA74;
+    background-color: #00d2b5;
     color: white;
     font-size: 10px;
     line-height: 16px;
@@ -1073,7 +1073,7 @@ button:hover{
 }
 
 .workflow-type-indicator.program{
-    /*background-color:#04ba74;*/
+    /*background-color:#00d2b5;*/
     background-color:#327B77;
 }
 
@@ -1177,7 +1177,7 @@ button:hover{
 }
 
 .filter-option.active{
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 
 .user-add .search-input{
@@ -1221,7 +1221,7 @@ button:hover{
     gap: 5px;
 }
 .workflow-filter-sort .workflow-sort-indicator:not(.item-0){
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 
 .project-header{
@@ -1314,8 +1314,8 @@ button:hover{
 }
 
 .explore-menu input:checked+label.input{
-    background:#eefff8;
-    border:1px solid #04ba74;
+    background:#f0fefe;
+    border:1px solid #00d2b5;
 }
 
 .explore-menu .explore-preview{
@@ -1346,9 +1346,9 @@ button:hover{
 }
 
 .explore-page-buttons .active-page-button{
-    background:#04ba74;
+    background:#00d2b5;
     color:white;
-    border: 1px solid #04ba74;
+    border: 1px solid #00d2b5;
 }
 
 .flex-wrap{
@@ -1465,7 +1465,7 @@ button:hover{
 .big-button > .material-symbols-rounded{
     display: block;
     font-size: 36px;
-    color: #04BA74;
+    color: #00d2b5;
 }
 
 .big-button-title{
@@ -1480,13 +1480,13 @@ button:hover{
 }
 
 .big-button.active{
-    background: #EEFFF8;
-    border: 1px solid #04BA74;
+    background: #f0fefe;
+    border: 1px solid #00d2b5;
 }
 
 .public-link-button{
     border-radius: 10px;
-    background: #04BA74;
+    background: #00d2b5;
     width: 100%;
     color: white;
     display: flex;
@@ -1872,7 +1872,7 @@ text {
 .splash-image-wrapper div{
     padding:10px;
     font-size:20px;
-    color:#04ba74;
+    color:#00d2b5;
     white-space:nowrap;
 }
 

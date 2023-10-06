@@ -38,7 +38,7 @@ export class OutcomeEditViewUnconnected extends EditableComponentWithSorting{
             </div>
         );
         if(outcomes.length==0)outcomes=(
-            [<div class="emptytext">{gettext("Here you can add and edit outcomes for the current workflow. They will then be available in the Workflow view to tag nodes in the Outcomes tab of the sidebar.")}</div>,
+            [<div class="emptytext">{gettext("Here you can add and edit KPI for the current workflow. They will then be available in the Workflow view to tag nodes in the KPI tab of the sidebar.")}</div>,
             this.getAddNew({})]
         );
         
@@ -250,10 +250,10 @@ class OutcomeBarUnconnected extends React.Component{
         if(outcomebaroutcomes.length==0){
             outcomebaroutcomes=gettext("Add outcomes to this workflow in by clicking the button below.");
         }
-        let edittext=Constants.capWords(gettext("Edit")+" "+gettext(this.props.workflow_type+" outcomes"));
+        let edittext=(gettext("Edit KPI"));
         return reactDom.createPortal(
             <div id="outcome-bar-workflow" class="right-panel-inner">
-                <h3 class="drag-and-drop">{gettext("Outcomes")}</h3>
+                <h3 class="drag-and-drop">{gettext("KPI")}</h3>
                 <div class="outcome-bar-outcome-block">
                     {outcomebaroutcomes}
                 </div>
@@ -297,17 +297,17 @@ class ParentOutcomeBarUnconnected extends React.Component{
         
         
         if(outcomebaroutcomes.length==0){
-            outcomebaroutcomes=gettext("Here you can find outcomes from the workflows that contain a node linked to this workflow. This allows you to create relationships between the outcomes at different levels (ex. program to course), called 'alignment'. Link this workflow to a node in another to do so.");
+            outcomebaroutcomes=gettext("Here you can find KPI from the workflows that contain a node linked to this workflow. This allows you to create relationships between the KPI at different levels, called 'alignment'. Link this workflow to a node in another to do so.");
         }
 
         let multiple_parent_warning;
         if(this.props.parent_nodes.length>1){
-            multiple_parent_warning = <div><span class="material-symbols-rounded filled small-inline red">error</span>{gettext("Warning: you have linked this workflow to multiple nodes. This is not recommended. You may see outcomes from different parent workflows, or duplicates of outcomes.")}</div>
+            multiple_parent_warning = <div><span class="material-symbols-rounded filled small-inline red">error</span>{gettext("Warning: you have linked this workflow to multiple nodes. This is not recommended. You may see KPI from different parent workflows, or duplicates of KPI.")}</div>
         }
         
         return reactDom.createPortal(
             <div id="outcome-bar-workflow" class="right-panel-inner">
-                <h3 class="drag-and-drop">{gettext("Outcomes from Parent Workflow")}</h3>
+                <h3 class="drag-and-drop">{gettext("KPI from Parent Workflow")}</h3>
                 <div class="outcome-bar-outcome-block">
                     {multiple_parent_warning}
                     {outcomebaroutcomes}

@@ -75,7 +75,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!-- * Icons -->
-    <link rel="icon" type="image/x-icon" href="{% static 'course_flow/img/courseflow-favicon.png' %}";>
     <!-- ** Preloads -->
     <link
       rel="preload"
@@ -169,7 +168,7 @@
             menu
           </span>
         </div>
-        <img class="title-image" src="{% static 'course_flow/img/logo-courseflow.svg' %}"/>
+        <div class="title-image">Management Tool</div>
         <a id="panel-home" class="panel-item hover-shade no-underline" href="{% url 'course_flow:home' %}">
           <span class="material-symbols-rounded">home</span>
           <div>{% trans 'Home' %}</div>
@@ -179,15 +178,10 @@
           <span class="material-symbols-rounded">collections_bookmark</span>
           <div>{% trans 'Your Library' %}</div>
         </a>
-        <a id="panel-explore" class="panel-item hover-shade no-underline" href="{% url 'course_flow:explore' %}">
-          <span class="material-symbols-rounded">manage_search</span>
-          <div>{% trans 'Explore' %}</div>
-        </a>
-        {% endif %}
-        {% if not user.is_anonymous %}
+        {% else %}
         <a id="panel-my-live-projects" class="panel-item hover-shade no-underline" href="{% url 'course_flow:my-live-projects' %}">
           <span class="material-symbols-rounded">calendar_month</span>
-          <div>{% trans 'My Classrooms' %}</div>
+          <div>{% trans 'My Projects' %}</div>
         </a>
         {% endif %}
 
@@ -214,16 +208,6 @@
             <a class="panel-favourite hover-shade collapsed-text-show-more" href="{% url 'course_flow:my-favourites' %}">{% trans 'See all' %}</a>
           {% endif %}
         </div>
-        {% if user|has_group:"Teacher" %}
-        <!-- <hr>
-        <a class="panel-item hover-shade" href="{% url 'course_flow:import' %}">{% trans "Import from old CourseFlow" %}</a> -->
-        {% endif %}
-        <a id="user-feedback" target="_blank" class="panel-item hover-shade no-underline" href="https://courseflow.freshdesk.com/support/home">
-          <span class="green filled material-symbols-rounded">help</span>
-          <div>
-            {% trans "Help and support" %}
-          </div>
-        </a>
       </div>
       <div class="main-block">
         <div class="topnav hide-print">
@@ -238,9 +222,7 @@
                 </div>
                 <div id="create-links" class="create-dropdown">
                   <a id="project-create" class="hover-shade" href="{% url 'course_flow:project-create' %}">{% trans 'Project' %}</a>
-                  <a id="activity-create" class="hover-shade">{% trans 'Activity' %}</a>
-                  <a id="course-create" class="hover-shade">{% trans 'Course' %}</a>
-                  <a id="program-create" class="hover-shade">{% trans 'Program' %}</a>
+                  <a id="course-create" class="hover-shade">{% trans 'Workflow' %}</a>
                 </div>
               </div>
               {% endif %}
@@ -342,8 +324,6 @@
       remove_comment: "{% url 'course_flow:remove-comment' %}",
       remove_all_comments: "{% url 'course_flow:remove-all-comments' %}",
       get_parent_workflow_info: "{% url 'course_flow:get-parent-workflow-info' %}",
-      get_export: "{% url 'course_flow:get-export' %}",
-      get_export_download: "{% url 'course_flow:get-export-download' %}",
       import_data: "{% url 'course_flow:import-data' %}",
       make_project_live: "{% url 'course_flow:make-project-live' %}",
       set_workflow_visibility: "{% url 'course_flow:set-workflow-visibility' %}",
@@ -371,8 +351,6 @@
       get_public_parent_workflow_info: "{% url 'course_flow:get-public-parent-workflow-info' pk='0' %}",
     };
     const create_path = {
-        activity_strategy:"{% url 'course_flow:activity-strategy-create' %}",
-        course_strategy:"{% url 'course_flow:course-strategy-create' %}",
         project:"{% url 'course_flow:project-create' %}",
         activity:"{% url 'course_flow:activity-create' projectPk='0' %}",
         course:"{% url 'course_flow:course-create' projectPk='0' %}",
@@ -453,19 +431,17 @@
     let show_notification_request={{ show_notification_request }};
 
     $(window).on("load",()=>{
-      $("#create-links #activity-create").on("click",()=>renderers.CreateNew("{% url 'course_flow:activity-create' projectPk='0' %}"));
       $("#create-links #course-create").on("click",()=>renderers.CreateNew("{% url 'course_flow:course-create' projectPk='0' %}"));
-      $("#create-links #program-create").on("click",()=>renderers.CreateNew("{% url 'course_flow:program-create' projectPk='0' %}"));
 
-      if(show_notification_request){
-        if(window.confirm(
-          '{% trans "Hi there! Would you like to receive emails about updates to CourseFlow? You can always change your mind by viewing your profile." %}'
-        )){
-          $.post("{% url 'course_flow:select-notifications' %}",{"notifications":JSON.stringify(true)});
-        }else{
-          $.post("{% url 'course_flow:select-notifications' %}",{"notifications":JSON.stringify(false)});
-        }
-      }
+      // if(show_notification_request){
+      //   if(window.confirm(
+      //     '{% trans "Hi there! Would you like to receive emails about updates to CourseFlow? You can always change your mind by viewing your profile." %}'
+      //   )){
+      //     $.post("{% url 'course_flow:select-notifications' %}",{"notifications":JSON.stringify(true)});
+      //   }else{
+      //     $.post("{% url 'course_flow:select-notifications' %}",{"notifications":JSON.stringify(false)});
+      //   }
+      // }
     });
 
     //Fix Quilljs's link sanitization

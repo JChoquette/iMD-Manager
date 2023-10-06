@@ -41,13 +41,10 @@ export class LibraryMenu extends React.Component{
     getCreate(){
         let create;
         if(!this.props.renderer.read_only)create = (
-            <div class="hover-shade" id="create-project-button" title={gettext("Create project or strategy")} ref={this.createDiv}>
+            <div class="hover-shade" id="create-project-button" title={gettext("Create project")} ref={this.createDiv}>
                 <span class="material-symbols-rounded filled green">add_circle</span>
                 <div id="create-links-project" class="create-dropdown">
                     <a id="project-create-library" href={create_path.project} class="hover-shade">{gettext("New project")}</a>
-                    <hr/>
-                    <a id="activity-strategy-create" href={create_path.activity_strategy} class="hover-shade">{gettext("New activity strategy")}</a>
-                    <a id="course-strategy-create" href={create_path.course_strategy} class="hover-shade">{gettext("New course strategy")}</a>
                 </div>
             </div>
         )
@@ -56,11 +53,11 @@ export class LibraryMenu extends React.Component{
 
     getOverflowLinks(){
         let overflow_links = [];
-        overflow_links.push(
-            <a id="import-old" class="hover-shade" href={get_paths.import}>
-                {gettext("Import from old CourseFlow")}
-            </a>
-        );
+        // overflow_links.push(
+        //     <a id="import-old" class="hover-shade" href={get_paths.import}>
+        //         {gettext("Import from old CourseFlow")}
+        //     </a>
+        // );
         return overflow_links;
     }
 
@@ -224,19 +221,24 @@ export class ProjectMenu extends LibraryMenu{
     }
 
     getViewButtons(){
-        return [
+        if(this.props.renderer.user_role==Constants.role_keys.teacher)return [
             {type:"workflows",name:gettext("Workflows")},
-            {type:"overview",name:gettext("Classroom Overview")},
-            {type:"students",name:gettext("Students")},
-            {type:"assignments",name:gettext("Assignments")},
+            {type:"overview",name:gettext("Overview")},
+            {type:"assignments",name:gettext("Assigned Tasks")},
             {type:"completion_table",name:gettext("Completion Table")},
+            // {type:"settings",name:gettext("Classroom Settings")},
+        ];
+        else return [
+            {type:"workflows",name:gettext("Workflows")},
+            {type:"overview",name:gettext("Overview")},
+            {type:"assignments",name:gettext("Assigned Tasks")},
             // {type:"settings",name:gettext("Classroom Settings")},
         ];
     }
 
     getContent(){
         let return_val = [];
-        if(this.state.data.liveproject && this.props.renderer.user_role==Constants.role_keys.teacher)return_val.push(
+        if(this.state.data.liveproject && (this.props.renderer.user_role==Constants.role_keys.teacher || this.props.renderer.user_role == Constants.role_keys.student))return_val.push(
             <div class="workflow-view-select hide-print">
             {this.getViewButtons().map(
                 (item)=>{
@@ -247,15 +249,16 @@ export class ProjectMenu extends LibraryMenu{
             )}
             </div>
         );
+        console.log("ROLE:")
+        console.log(this.getRole())
         switch(this.state.view_type){
             case "overview":
-                return_val.push(<LiveProjectViews.LiveProjectOverview renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
-                break;
-            case "students":
-                return_val.push(<LiveProjectViews.LiveProjectStudents renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                if(this.getRole()=="teacher")return_val.push(<LiveProjectViews.LiveProjectOverview renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                else if(this.getRole()=="student")return_val.push(<LiveProjectViews.StudentLiveProjectOverview renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
                 break;
             case "assignments":
-                return_val.push(<LiveProjectViews.LiveProjectAssignments renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                if(this.getRole()=="teacher")return_val.push(<LiveProjectViews.LiveProjectAssignments renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
+                else if(this.getRole()=="student")return_val.push(<LiveProjectViews.StudentLiveProjectAssignments renderer={this.props.renderer} role={this.getRole()} objectID={this.state.data.id} view_type={this.state.view_type}/>);
                 break;
             case "completion_table":
                 return_val.push(<LiveProjectViews.LiveProjectCompletionTable renderer={this.props.renderer} role={this.getRole()} objectID={this.props.data.id} view_type={this.state.view_type}/>);
@@ -274,32 +277,21 @@ export class ProjectMenu extends LibraryMenu{
     }
 
     getRole(){
-        return "teacher";
+        if(this.props.renderer.user_role==Constants.role_keys.teacher) return "teacher";
+        if(this.props.renderer.user_role==Constants.role_keys.student) return "student";
+        return "none";
     }
 
     getOverflowLinks(){
         let data = this.state.data;
-        let liveproject;
-        if(data.author_id==user_id){
-            if(data.liveproject){
-                liveproject=(
-                    <a id="live-project" class="hover-shade" href={update_path.liveproject.replace("0",data.id)}>{gettext("View Classroom")}</a>
-                );
-            }else{
-                liveproject=(
-                    <a id="live-project" class="hover-shade" onClick={this.makeLive.bind(this)}>{gettext("Create Classroom")}</a>
-                );
-            }
-        }
 
-        let overflow_links=[liveproject];
+        let overflow_links=[];
         overflow_links.push(
             <a id="comparison-view" class="hover-shade" href="comparison">
                 {gettext("Workflow comparison tool")}
             </a>
         );
         overflow_links.push(<hr/>);
-        overflow_links.push(this.getExportButton());
         overflow_links.push(this.getCopyButton());
         if(data.author_id==user_id){
             overflow_links.push(<hr/>);
@@ -347,26 +339,6 @@ export class ProjectMenu extends LibraryMenu{
         restoreSelf(this.props.data.id,"project",()=>{
                 component.setState({data:{...this.props.data,deleted:false}})
         });
-    }
-
-    makeLive(){
-        let component = this;
-        if(window.confirm(gettext("Are you sure you want to create a live classroom for this project?"))){
-            makeProjectLive(this.props.data.id,(data)=>{
-                //window.location = update_path.liveproject.replace("0",component.props.data.id);
-                location.reload();
-            });
-        }
-    }
-
-    getExportButton(){
-        if(!user_id)return null;
-        let export_button = (
-            <div id="export-button" class="hover-shade" onClick={()=>renderMessageBox(this.state.data,"export",closeMessageBox)}>
-                <div>{gettext("Export")}</div>
-            </div>
-        );
-        return export_button;
     }
 
     getCopyButton(){
@@ -460,7 +432,7 @@ export class ProjectMenu extends LibraryMenu{
         if(this.state.users.published){
             users_group.push(
                 <div class="user-name">
-                    {Constants.getUserTag("view")}<span class="material-symbols-rounded">public</span> {gettext("All CourseFlow")}
+                    {Constants.getUserTag("view")}<span class="material-symbols-rounded">public</span> {gettext("All users")}
                 </div>
             );
         }
@@ -496,9 +468,7 @@ export class ProjectMenu extends LibraryMenu{
             <div class="hover-shade" id="create-project-button" title={gettext("Create workflow")} ref={this.createDiv}>
                 <span class="material-symbols-rounded filled">add_circle</span>
                 <div id="create-links-project" class="create-dropdown">
-                    <a id="activity-create-project" href={create_path_this_project.activity} class="hover-shade">{gettext("New activity")}</a>
-                    <a id="course-create-project" href={create_path_this_project.course} class="hover-shade">{gettext("New course")}</a>
-                    <a id="program-create-project" href={create_path_this_project.program} class="hover-shade">{gettext("New program")}</a>
+                    <a id="course-create-project" href={create_path_this_project.course} class="hover-shade">{gettext("New workflow")}</a>
                 </div>
             </div>
         )
@@ -1169,9 +1139,7 @@ export class WorkflowForMenu extends React.Component{
     getTypeIndicator(){
         let data = this.props.workflow_data;
         let type=data.type
-        let type_text = gettext(type);
-        if(type=="liveproject")type_text=gettext("classroom");
-        if(data.is_strategy)type_text+=gettext(" strategy");
+        let type_text = gettext("workflow");
         return (
             <div class={"workflow-type-indicator "+type}>{Constants.capWords(type_text)}</div>
         );
@@ -1194,13 +1162,6 @@ export class WorkflowForMenu extends React.Component{
         let workflows=[];
         if(this.props.workflow_data.type=="project" && !(this.props.workflow_data.workflow_count ==null))workflows.push(
             <div class="workflow-created">{this.props.workflow_data.workflow_count+" "+gettext("workflows")}</div>
-        );
-        if(this.props.workflow_data.type=="project" && this.props.workflow_data.has_liveproject && this.props.workflow_data.object_permission.role_type != Constants.role_keys["none"])workflows.push(
-            <a class="workflow-created workflow-live-classroom hover-shade" href={
-                update_path["liveproject"].replace("0",this.props.workflow_data.id)
-            }>
-                <span class="material-symbols-rounded small-inline" title={gettext("Live Classroom")}>group</span>{" "+gettext("Live Classroom")}
-            </a>
         );
         if(this.props.workflow_data.is_linked)workflows.push(
             <div class="workflow-created linked-workflow-warning" title={gettext("Warning: linking the same workflow to multiple nodes can result in loss of readability if you are associating parent workflow outcomes with child workflow outcomes.")}><span class="material-symbols-rounded red filled small-inline">error</span>{" "+gettext("Already in use")}</div>

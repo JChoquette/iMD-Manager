@@ -40,14 +40,6 @@ def async_send_export_email(
         file = export_functions.get_outcomes_export(
             model_object, object_type, export_format, allowed_sets
         )
-    elif export_type == "framework":
-        file = export_functions.get_course_frameworks_export(
-            model_object, object_type, export_format, allowed_sets
-        )
-    elif export_type == "matrix":
-        file = export_functions.get_program_matrix_export(
-            model_object, object_type, export_format, allowed_sets
-        )
     elif export_type == "node":
         file = export_functions.get_nodes_export(
             model_object, object_type, export_format, allowed_sets

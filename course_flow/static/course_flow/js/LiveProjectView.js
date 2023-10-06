@@ -4,7 +4,6 @@ import {DatePicker, AssignmentTitle, WorkflowTitle, NodeTitle, TitleText, Action
 import {renderMessageBox,closeMessageBox} from "./MenuComponents";
 import {WorkflowForMenu} from "./Library"
 import {setAssignmentCompletion, updateLiveProjectValue, createAssignment, getLiveProjectData, getLiveProjectDataStudent, setWorkflowVisibility, getWorkflowNodes} from "./PostFunctions";
-import {StudentManagement} from "./StudentManagement";
 import {AssignmentView, AssignmentViewSmall} from "./LiveAssignmentView";
 import * as Constants from "./Constants";
 
@@ -90,8 +89,6 @@ export class LiveProjectMenu extends React.Component{
         switch(this.state.view_type){
             case "overview":
                 return (<LiveProjectOverview renderer={this.props.renderer} role={this.getRole()} objectID={this.props.project.id} view_type={this.state.view_type}/>);
-            case "students":
-                return (<LiveProjectStudents renderer={this.props.renderer} role={this.getRole()} liveproject={this.state.liveproject} objectID={this.props.project.id} view_type={this.state.view_type}/>);
             case "assignments":
                 return (<LiveProjectAssignments renderer={this.props.renderer} role={this.getRole()} objectID={this.props.project.id} view_type={this.state.view_type}/>);
             case "workflows":
@@ -216,12 +213,12 @@ export class LiveProjectOverview extends LiveProjectSection{
 
         return (
             <div class="workflow-details">
-                <h3>{gettext("Teachers")}:</h3>
+                <h3>{gettext("Editors")}:</h3>
                 <table class="overview-table">
                     <tr><th>{gettext("User")}</th><th>{gettext("Assignments Complete")}</th></tr>
                     {teachers}
                 </table>
-                <h3>{gettext("Students")}:</h3>
+                <h3>{gettext("Viewers")}:</h3>
                 <table class="overview-table">
                     <tr><th>{gettext("User")}</th><th>{gettext("Assignments Complete")}</th></tr>
                     {students}
@@ -543,52 +540,6 @@ export class StudentLiveProjectWorkflows extends LiveProjectSection{
 
 }
 
-export class LiveProjectStudents extends LiveProjectSection{
-
-    render(){
-        if(!this.state.data)return this.defaultRender();
-        let liveproject = this.state.data.liveproject;
-
-        let register_link;
-        if(liveproject && liveproject.registration_hash){
-            let register_url = registration_path.replace("project_hash",liveproject.registration_hash);
-            register_link = (
-                <div class="user-text">
-                    <div class="user-panel">
-                        <h4>Student Registration:</h4>
-                        <p>
-                            {gettext("Student Registration Link: ")}
-                        </p>
-                        <div>
-                            <img id="copy-text" class="hover-shade" onClick={
-                                ()=>{
-                                    navigator.clipboard.writeText(register_url);
-                                    $("#copy-text").attr("src",iconpath+"duplicate_checked.svg");
-                                    $("#url-text").text("Copied to Clipboard");
-                                    setTimeout(()=>{
-                                        $("#copy-text").attr("src",iconpath+"duplicate_clipboard.svg");
-                                        $("#url-text").text(register_url);
-                                    },1000)
-                                }
-                            } title={gettext("Copy to clipboard")} src={iconpath+"duplicate_clipboard.svg"}/>
-                            <a id="url-text" class="selectable" href={register_url}>
-                                {register_url}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        return (
-            <div class="workflow-details">
-                <StudentManagement data={this.state.data.liveproject}/>
-                {register_link}
-            </div>
-        );
-    }
-
-}
 
 export class LiveProjectSettings extends LiveProjectSection{
     constructor(props){
@@ -606,25 +557,25 @@ export class LiveProjectSettings extends LiveProjectSection{
 
         return (
             <div class="workflow-details">
-                <h4>{gettext("Classroom configuration")}:</h4>
+                <h4>{gettext("Settings")}:</h4>
                 <div>
                     <input id="default-single-completion" name="default-single-completion" type="checkbox" checked={data.default_single_completion} onChange={(evt)=>changeField("default_single_completion",evt.target.checked)}/>
                     <label for="default-signle-completion" title={gettext("Whether to mark the assignment as complete if any user has completed it.")}>{gettext("By default, mark assignments as complete when a single user has completed them")}</label>
                 </div>
                 <div>
                     <input id="default-assign-to-all" name="default-assign-to-all" type="checkbox" checked={data.default_assign_to_all} onChange={(evt)=>changeField("default_assign_to_all",evt.target.checked)}/>
-                    <label for="default-assign-to-all" title={gettext("Whether creating an assignment automatically adds all students to it.")}>{gettext("Assign new assignments to all students by default")}</label>
+                    <label for="default-assign-to-all" title={gettext("Whether creating an assignment automatically adds all users to it.")}>{gettext("Assign new assignments to all students by default")}</label>
                 </div>
                 <div>
                     <input id="default-self-reporting" name="default-self-reporting" type="checkbox" checked={data.default_self_reporting} onChange={(evt)=>changeField("default_self_reporting",evt.target.checked)}/>
-                    <label for="default-self-reporting" title={gettext("Whether students can mark their own assignments as complete.")}>{gettext("Let students self-report their assignment completion by default")}</label>
+                    <label for="default-self-reporting" title={gettext("Whether users can mark their own assignments as complete.")}>{gettext("Let students self-report their assignment completion by default")}</label>
                 </div>
                 <div>
                     <input id="default-all-workflows-visible" name="default-all-workflows-visible" type="checkbox" checked={data.default_all_workflows_visible} onChange={(evt)=>changeField("default_all_workflows_visible",evt.target.checked)}/>
-                    <label for="default-all-workflows-visible" title={gettext("Whether all workflows in the project will be visible to students by default.")}>{gettext("All Workflows Visible To Students")}</label>
+                    <label for="default-all-workflows-visible" title={gettext("Whether all workflows in the project will be visible to all users by default.")}>{gettext("All Workflows Visible To Students")}</label>
                 </div>
                 <div>
-                <button class="primary-button" disabled={(!this.state.has_changed)} onClick={this.saveChanges.bind(this)}>{gettext("Save classroom changes")}</button>
+                <button class="primary-button" disabled={(!this.state.has_changed)} onClick={this.saveChanges.bind(this)}>{gettext("Save settings changes")}</button>
                 </div>
             </div>
         );

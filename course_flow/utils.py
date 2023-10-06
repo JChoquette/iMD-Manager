@@ -223,7 +223,7 @@ def get_nondeleted_favourites(user):
 def check_possible_parent(workflow, parent_workflow, same_project):
     order = ["activity", "course", "program"]
     try:
-        if order.index(workflow.type) == order.index(parent_workflow.type) - 1:
+        if order.index(workflow.type) == order.index(parent_workflow.type):
             if same_project:
                 if workflow.get_project() == parent_workflow.get_project():
                     return True

@@ -19,11 +19,6 @@ def course_flow_patterns():
             views.SALTISEAdminView.as_view(),
             name="saltise-admin",
         ),
-        path(
-            "admin/saltise-analytics",
-            views.SALTISEAnalyticsView.as_view(),
-            name="saltise-analytics",
-        ),
         path("logout/", views.logout_view, name="logout"),
         path("mylibrary/", views.mylibrary_view, name="my-library"),
         path("mylibrary/get-projects/", views.get_library, name="get-library"),
@@ -52,7 +47,6 @@ def course_flow_patterns():
         # path("mytemplates/", views.mytemplates_view, name="my-templates"),
         # path("myshared/", views.myshared_view, name="my-shared"),
         path("myfavourites/", views.myfavourites_view, name="my-favourites"),
-        path("explore/", views.ExploreView.as_view(), name="explore"),
         path("import/", views.import_view, name="import"),
         path(
             "project/<int:pk>/",
@@ -283,19 +277,9 @@ def course_flow_patterns():
             name="course-create",
         ),
         path(
-            "course-strategy/create/",
-            views.CourseStrategyCreateView.as_view(),
-            name="course-strategy-create",
-        ),
-        path(
             "activity/<int:projectPk>/create/",
             views.ActivityCreateView.as_view(),
             name="activity-create",
-        ),
-        path(
-            "activity-strategy/create/",
-            views.ActivityStrategyCreateView.as_view(),
-            name="activity-strategy-create",
         ),
         path(
             "comments/get/",
@@ -338,24 +322,9 @@ def course_flow_patterns():
             name="get-public-parent-workflow-info",
         ),
         path(
-            "exports/get/",
-            views.get_export,
-            name="get-export",
-        ),
-        path(
             "imports/import-data/",
             views.import_data,
             name="import-data",
-        ),
-        path(
-            "downloads/saltise/get/",
-            views.get_saltise_download,
-            name="get-saltise-download",
-        ),
-        path(
-            "downloads/exports/get/",
-            views.get_export_download,
-            name="get-export-download",
         ),
         path(
             "project/makelive",

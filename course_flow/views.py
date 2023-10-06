@@ -318,41 +318,6 @@ def logout_view(request):
     return redirect(reverse("login"))
 
 
-class ExploreView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    def test_func(self):
-        return (
-            Group.objects.get(name=settings.TEACHER_GROUP)
-            in self.request.user.groups.all()
-        )
-
-    template_name = "course_flow/explore.html"
-
-    def get_context_data(self):
-        initial_workflows, pages = get_explore_objects(
-            self.request.user,
-            "",
-            20,
-            True,
-            {"sort": "created_on", "sort_reversed": True},
-        )
-        return {
-            "initial_workflows": JSONRenderer()
-            .render(
-                InfoBoxSerializer(
-                    initial_workflows,
-                    context={"user": self.request.user},
-                    many=True,
-                ).data
-            )
-            .decode("utf-8"),
-            "initial_pages": JSONRenderer().render(pages).decode("utf-8"),
-            "disciplines": JSONRenderer()
-            .render(
-                DisciplineSerializer(Discipline.objects.all(), many=True).data
-            )
-            .decode("utf-8"),
-        }
-
 
 def get_my_projects(user, add, **kwargs):
     for_add = kwargs.get("for_add", False)
@@ -924,6 +889,7 @@ def get_workflow_info_boxes(user, workflow_type, **kwargs):
     this_project = kwargs.get("this_project", True)
     get_strategies = kwargs.get("get_strategies", False)
     get_favourites = kwargs.get("get_favourites", False)
+    exclude_ids = kwargs.get("exclude_ids",[])
     model = get_model_from_str(workflow_type)
     permissions_view = {
         "user_permissions__user": user,
@@ -939,14 +905,14 @@ def get_workflow_info_boxes(user, workflow_type, **kwargs):
         if this_project:
             items += model.objects.filter(
                 project=project, is_strategy=False, deleted=False
-            )
+            ).exclude(id__in=exclude_ids)
         # Add everything from other projects that the user has access to
         else:
             items += (
                 list(
                     model.objects.filter(
                         author=user, is_strategy=False, deleted=False
-                    ).exclude(project=project)
+                    ).exclude(project=project).exclude(id__in=exclude_ids)
                 )
                 + list(
                     model.objects.filter(**permissions_edit)
@@ -954,7 +920,7 @@ def get_workflow_info_boxes(user, workflow_type, **kwargs):
                         project=project,
                     )
                     .exclude(project=None)
-                    .exclude(Q(deleted=True) | Q(project__deleted=True))
+                    .exclude(Q(deleted=True) | Q(project__deleted=True)).exclude(id__in=exclude_ids)
                 )
                 + list(
                     model.objects.filter(**permissions_view)
@@ -962,7 +928,7 @@ def get_workflow_info_boxes(user, workflow_type, **kwargs):
                         project=project, deleted=False, project__deleted=True
                     )
                     .exclude(project=None)
-                    .exclude(Q(deleted=True) | Q(project__deleted=True))
+                    .exclude(Q(deleted=True) | Q(project__deleted=True)).exclude(id__in=exclude_ids)
                 )
             )
     else:
@@ -986,19 +952,19 @@ def get_workflow_info_boxes(user, workflow_type, **kwargs):
                 model.objects.filter(
                     **published_or_user,
                     **favourites_and_strategies,
-                ).exclude(exclude)
+                ).exclude(exclude).exclude(id__in=exclude_ids)
             )
             + list(
                 model.objects.filter(
                     **permissions_edit,
                     **favourites_and_strategies,
-                ).exclude(exclude)
+                ).exclude(exclude).exclude(id__in=exclude_ids)
             )
             + list(
                 model.objects.filter(
                     **permissions_view,
                     **favourites_and_strategies,
-                ).exclude(exclude)
+                ).exclude(exclude).exclude(id__in=exclude_ids)
             )
         )
 
@@ -1010,6 +976,7 @@ def get_workflow_data_package(user, project, **kwargs):
     type_filter = kwargs.get("type_filter", "workflow")
     self_only = kwargs.get("self_only", False)
     get_strategies = kwargs.get("get_strategies", False)
+    exclude_ids = kwargs.get("exclude_ids",[])
     this_project_sections = []
     other_project_sections = []
     all_published_sections = []
@@ -1026,6 +993,7 @@ def get_workflow_data_package(user, project, **kwargs):
                         project=project,
                         this_project=True,
                         get_strategies=get_strategies,
+                        exclude_ids=exclude_ids,
                     ),
                 }
             )
@@ -1055,6 +1023,7 @@ def get_workflow_data_package(user, project, **kwargs):
                             this_type,
                             get_strategies=get_strategies,
                             get_favourites=True,
+                            exclude_ids=exclude_ids,
                         ),
                     }
                 )
@@ -1064,7 +1033,7 @@ def get_workflow_data_package(user, project, **kwargs):
                 "title": "",
                 "object_type": type_filter,
                 "is_strategy": get_strategies,
-                "objects": get_workflow_info_boxes(user, type_filter),
+                "objects": get_workflow_info_boxes(user, type_filter,exclude_ids=exclude_ids,),
             }
         )
         if not self_only:
@@ -1074,7 +1043,8 @@ def get_workflow_data_package(user, project, **kwargs):
                     "object_type": type_filter,
                     "is_strategy": get_strategies,
                     "objects": get_workflow_info_boxes(
-                        user, type_filter, get_favourites=True
+                        user, type_filter, get_favourites=True,
+                        exclude_ids=exclude_ids,
                     ),
                 }
             )
@@ -1724,30 +1694,6 @@ class CourseCreateView(
         )
 
 
-class CourseStrategyCreateView(
-    LoginRequiredMixin, UserPassesTestMixin, CreateView_No_Autocomplete
-):
-    model = Course
-    fields = ["title", "description"]
-    template_name = "course_flow/course_create.html"
-
-    def test_func(self):
-        return (
-            Group.objects.get(name=settings.TEACHER_GROUP)
-            in self.request.user.groups.all()
-        )
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.is_strategy = True
-        response = super(CreateView, self).form_valid(form)
-        return response
-
-    def get_success_url(self):
-        return reverse(
-            "course_flow:workflow-update", kwargs={"pk": self.object.pk}
-        )
-
 
 class ActivityCreateView(
     LoginRequiredMixin, UserCanEditProjectMixin, CreateView_No_Autocomplete
@@ -1768,30 +1714,6 @@ class ActivityCreateView(
             "course_flow:workflow-update", kwargs={"pk": self.object.pk}
         )
 
-
-class ActivityStrategyCreateView(
-    LoginRequiredMixin, UserPassesTestMixin, CreateView_No_Autocomplete
-):
-    model = Activity
-    fields = ["title", "description"]
-    template_name = "course_flow/activity_create.html"
-
-    def test_func(self):
-        return (
-            Group.objects.get(name=settings.TEACHER_GROUP)
-            in self.request.user.groups.all()
-        )
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.is_strategy = True
-        response = super(CreateView, self).form_valid(form)
-        return response
-
-    def get_success_url(self):
-        return reverse(
-            "course_flow:workflow-update", kwargs={"pk": self.object.pk}
-        )
 
 
 # def get_owned_courses(user: User):
@@ -1960,110 +1882,6 @@ def import_data(request: HttpRequest) -> JsonResponse:
     return JsonResponse({"action": "posted"})
 
 
-@user_can_view(False)
-def get_export(request: HttpRequest) -> HttpResponse:
-    object_id = json.loads(request.POST.get("objectID"))
-    object_type = json.loads(request.POST.get("objectType"))
-    export_type = request.POST.get("export_type")
-    export_format = request.POST.get("export_format")
-    allowed_sets = request.POST.getlist("object_sets[]", [])
-    try:
-        subject = _("Your CourseFlow Export")
-        text = _("Hi there! Here are the results of your recent export.")
-        tasks.async_send_export_email(
-            request.user.email,
-            object_id,
-            object_type,
-            export_type,
-            export_format,
-            allowed_sets,
-            subject,
-            text,
-        )
-
-    except AttributeError:
-        return JsonResponse({"action": "error"})
-    return JsonResponse({"action": "posted"})
-
-
-@ajax_login_required
-def get_saltise_download(request: HttpRequest) -> HttpResponse:
-
-    if (
-        Group.objects.get(name="SALTISE_Staff")
-        not in request.user.groups.all()
-    ):
-        return JsonResponse({"action": "error"})
-
-    file_ext = "xlsx"
-
-    filename = "saltise-analytics-data" + "." + file_ext
-    file = export_functions.get_saltise_analytics()
-    file_data = (
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    response = HttpResponse(file, content_type=file_data)
-    response["Content-Disposition"] = "attachment; filename=%s" % filename
-    return response
-
-
-# enable for testing/download
-@user_can_view(False)
-def get_export_download(request: HttpRequest) -> HttpResponse:
-    object_id = json.loads(request.POST.get("objectID"))
-    object_type = json.loads(request.POST.get("objectType"))
-    export_type = request.POST.get("export_type")
-    export_format = request.POST.get("export_format")
-    allowed_sets = request.POST.getlist("object_sets[]", "[]")
-    model_object = get_model_from_str(object_type).objects.get(pk=object_id)
-
-    if object_type == "project":
-        project_sets = ObjectSet.objects.filter(project=model_object)
-    else:
-        project_sets = ObjectSet.objects.filter(
-            project=model_object.get_project()
-        )
-    allowed_sets = project_sets.filter(id__in=allowed_sets)
-    if export_type == "outcome":
-        file = export_functions.get_outcomes_export(
-            model_object, object_type, export_format, allowed_sets
-        )
-    elif export_type == "framework":
-        file = export_functions.get_course_frameworks_export(
-            model_object, object_type, export_format, allowed_sets
-        )
-    elif export_type == "matrix":
-        file = export_functions.get_program_matrix_export(
-            model_object, object_type, export_format, allowed_sets
-        )
-    elif export_type == "node":
-        file = export_functions.get_nodes_export(
-            model_object, object_type, export_format, allowed_sets
-        )
-    if export_format == "excel":
-        file_ext = "xlsx"
-    elif export_format == "csv":
-        file_ext = "csv"
-
-    filename = (
-        object_type
-        + "_"
-        + str(object_id)
-        + "_"
-        + timezone.now().strftime(dateTimeFormatNoSpace())
-        + "."
-        + file_ext
-    )
-
-    if export_format == "csv":
-        file_data = "text/csv"
-    elif export_format == "excel":
-        file_data = (
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    response = HttpResponse(file, content_type=file_data)
-    response["Content-Disposition"] = "attachment; filename=%s" % filename
-    return response
 
 
 """
@@ -2364,12 +2182,14 @@ def get_workflow_context(request: HttpRequest) -> HttpResponse:
 @user_can_edit("nodePk")
 def get_possible_linked_workflows(request: HttpRequest) -> HttpResponse:
     node = Node.objects.get(pk=request.POST.get("nodePk"))
+    workflow = node.get_workflow()
     try:
-        project = node.get_workflow().get_project()
+        project = workflow.get_project()
         data_package = get_workflow_data_package(
             request.user,
             project,
-            type_filter=Workflow.SUBCLASSES[node.node_type - 1],
+            type_filter=Workflow.SUBCLASSES[node.node_type],
+            exclude_ids=[workflow.id]+[x.id for x in Workflow.objects.filter(weeks__nodes__linked_workflow=workflow)],
         )
     except AttributeError:
         return JsonResponse({"action": "error"})
@@ -4296,7 +4116,7 @@ def set_permission(request: HttpRequest) -> HttpResponse:
             not in user.groups.all()
         ):
             return JsonResponse(
-                {"action": "error", "error": _("User is not a teacher.")}
+                {"action": "error", "error": _("User does not have appropriate account type.")}
             )
         item = get_model_from_str(objectType).objects.get(id=object_id)
         # if hasattr(item, "get_subclass"):
@@ -4357,6 +4177,11 @@ def set_permission(request: HttpRequest) -> HttpResponse:
             ObjectPermission.objects.create(
                 user=user, content_object=item, permission_type=permission_type
             )
+            if permission_type == ObjectPermission.PERMISSION_EDIT:
+                LiveProjectUser.objects.create(user=user,liveproject=project.liveproject,role_type=LiveProjectUser.ROLE_TEACHER)
+            else:
+                LiveProjectUser.objects.create(user=user,liveproject=project.liveproject,role_type=LiveProjectUser.ROLE_STUDENT)
+
         response["action"] = "posted"
     except ValidationError:
         response["action"] = "error"
@@ -4511,94 +4336,6 @@ def get_library_objects(user, name_filter, nresults):
     return return_objects
 
 
-def get_explore_objects(user, name_filter, nresults, published, data):
-    keywords = name_filter.split(" ")
-    types = data.get("types", [])
-    disciplines = data.get("disciplines", [])
-    sort = data.get("sort", None)
-    from_saltise = data.get("from_saltise", False)
-    content_rich = data.get("content_rich", False)
-    sort_reversed = data.get("sort_reversed", False)
-    page = data.get("page", 1)
-
-    filter_kwargs = {}
-    # Create filters for each keyword
-    q_objects = Q()
-    for keyword in keywords:
-        q_objects &= (
-            Q(author__first_name__icontains=keyword)
-            | Q(author__username__icontains=keyword)
-            | Q(author__last_name__icontains=keyword)
-            | Q(title__icontains=keyword)
-            | Q(description__icontains=keyword)
-        )
-    # Choose which types to search
-    if len(types) == 0:
-        types = ("project", "workflow")
-    # Create disciplines filter
-    if len(disciplines) > 0:
-        filter_kwargs["disciplines__in"] = disciplines
-    if content_rich:
-        filter_kwargs["num_nodes__gte"] = 3
-    if from_saltise:
-        filter_kwargs["from_saltise"] = True
-
-    if published:
-        try:
-            queryset = reduce(
-                lambda x, y: chain(x, y),
-                [
-                    get_model_from_str(model_type)
-                    .objects.filter(published=True)
-                    .annotate(num_nodes=Count("workflows__weeks__nodes"))
-                    .filter(**filter_kwargs)
-                    .filter(q_objects)
-                    .exclude(deleted=True)
-                    .distinct()
-                    if model_type == "project"
-                    else get_model_from_str(model_type)
-                    .objects.filter(published=True)
-                    .annotate(num_nodes=Count("weeks__nodes"))
-                    .filter(**filter_kwargs)
-                    .filter(q_objects)
-                    .exclude(Q(deleted=True) | Q(project__deleted=True))
-                    .distinct()
-                    for model_type in types
-                ],
-            )
-            if sort is not None:
-                if sort == "created_on" or sort == "title":
-                    sort_key = attrgetter(sort)
-                elif sort == "relevance":
-                    sort_key = lambda x: get_relevance(
-                        x, name_filter, keywords
-                    )
-                queryset = sorted(
-                    queryset, key=sort_key, reverse=sort_reversed
-                )
-            queryset = list(queryset)
-
-            total_results = len(queryset)
-            return_objects = queryset[
-                max((page - 1) * nresults, 0) : min(
-                    page * nresults, total_results
-                )
-            ]
-            page_number = math.ceil(float(total_results) / nresults)
-            pages = {
-                "total_results": total_results,
-                "page_count": page_number,
-                "current_page": page,
-                "results_per_page": nresults,
-            }
-        except TypeError:
-            return_objects = Project.objects.none()
-            pages = {}
-    else:
-        return_objects = Project.objects.none()
-        pages = {}
-    return return_objects, pages
-
 
 @user_is_teacher()
 def search_all_objects(request: HttpRequest) -> HttpResponse:
@@ -4608,16 +4345,10 @@ def search_all_objects(request: HttpRequest) -> HttpResponse:
     full_search = data.get("full_search", False)
     published = data.get("published", False)
     # A full search of all objects, paginated
-    if full_search:
-        return_objects, pages = get_explore_objects(
-            request.user, name_filter, nresults, published, data
-        )
-    # Small search for library
-    else:
-        return_objects = get_library_objects(
-            request.user, name_filter, nresults
-        )
-        pages = {}
+    return_objects = get_library_objects(
+        request.user, name_filter, nresults
+    )
+    pages = {}
 
     return JsonResponse(
         {

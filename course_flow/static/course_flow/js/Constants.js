@@ -86,10 +86,10 @@ export const strategy_keys = {
 }
 export const default_column_settings = {
     0:{colour:"#6738ff",icon:"other"},
-    1:{colour:"#0b118a",icon:"ooci"},
-    2:{colour:"#114cd4",icon:"home"},
-    3:{colour:"#11b3d4",icon:"instruct"},
-    4:{colour:"#04d07d",icon:"students"},
+    1:{colour:"#0b118a",icon:"homework"},
+    2:{colour:"#114cd4",icon:"lesson"},
+    3:{colour:"#11b3d4",icon:"artifact"},
+    4:{colour:"#04d07d",icon:"assessment"},
     10:{colour:"#6738ff",icon:"other"},
     11:{colour:"#ad351d",icon:"homework"},
     12:{colour:"#ed4a28",icon:"lesson"},
@@ -130,25 +130,20 @@ export const through_parent_dictionary = {
 export const get_verbose = function(data,object_type){
     switch(object_type){
         case "node":
-            return data.node_type_display;
+            return gettext("Node")
         case "workflow":
         case "activity":
         case "course":
         case "program":
-            return {
-                "activity":gettext("Activity"),
-                "course":gettext("Course"),
-                "program":gettext("Program"),
-                "workflow":gettext("Workflow"),
-            }[data.type]
+            return gettext("Workflow")
         case "week":
             return data.week_type_display;
     }
     return {
-        "outcome":gettext("Outcome"),
-        "outcome_base":gettext("Outcome"),
+        "outcome":gettext("KPI"),
+        "outcome_base":gettext("KPI"),
         "nodelink":gettext("Node Link"),
-        "outcome":gettext("Outcome"),
+        "outcome":gettext("KPI"),
         "column":gettext("Column"),
         "project":gettext("Project"),
         "outcomehorizontallink":gettext("Association to the parent outcome"),

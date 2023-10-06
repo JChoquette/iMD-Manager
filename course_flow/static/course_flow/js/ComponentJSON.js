@@ -90,26 +90,6 @@ export class EditableComponent extends Component{
                             <input autocomplete="off" disabled={read_only} id="code-editor" type="text" value={data.code} maxlength="50" onChange={this.inputChanged.bind(this,"code")}/>
                         </div>
                     }
-                    {type=="node" && data.node_type<2 &&
-                        <div>
-                            <h4>{gettext("Context")}</h4>
-                            <select  id="context-editor" disabled={read_only} value={data.context_classification} onChange={this.inputChanged.bind(this,"context_classification")}>
-                                {this.props.renderer.context_choices.filter(choice=>(Math.floor(choice.type/100)==data.node_type||choice.type==0)).map((choice)=>
-                                    <option value={choice.type}>{choice.name}</option>
-                                )}
-                            </select>
-                        </div>
-                    }
-                    {type=="node" && data.node_type<2 &&
-                        <div>
-                            <h4>{gettext("Task")}</h4>
-                            <select id="task-editor" disabled={read_only} value={data.task_classification} onChange={this.inputChanged.bind(this,"task_classification")}>
-                                {this.props.renderer.task_choices.filter(choice=>(Math.floor(choice.type/100)==data.node_type||choice.type==0)).map((choice)=>
-                                    <option value={choice.type}>{choice.name}</option>
-                                )}
-                            </select>
-                        </div>
-                    }
                     {(type=="node" || type=="workflow") &&
                         <div>
                             <h4>{gettext("Time")}</h4>
@@ -129,21 +109,6 @@ export class EditableComponent extends Component{
                             <div>
                                 <input disabled={read_only} autocomplete="off" id="colour-editor" class="half-width" type="color" value={"#"+data.colour?.toString(16)} maxlength="30" onChange={this.inputChanged.bind(this,"colour")}/>
                             </div>
-                        </div>
-                    }
-                    {((type=="workflow" && data.type=="course")||(type=="node" && data.node_type==2)) &&
-                        <div>
-                            <h4>{gettext("Ponderation")}</h4>
-                            <input disabled={override || read_only} autocomplete="off" class="half-width" id="ponderation-theory" type="number" value={data.ponderation_theory} onChange={this.inputChanged.bind(this,"ponderation_theory")}/>
-                            <div class="half-width">{gettext("hrs. Theory")}</div>
-                            <input disabled={override || read_only} autocomplete="off" class="half-width" id="ponderation-practical" type="number" value={data.ponderation_practical} onChange={this.inputChanged.bind(this,"ponderation_practical")}/>
-                            <div class="half-width">{gettext("hrs. Practical")}</div>
-                            <input disabled={override || read_only} class="half-width" autocomplete="off" class="half-width" id="ponderation-individual" type="number" value={data.ponderation_individual} onChange={this.inputChanged.bind(this,"ponderation_individual")}/>
-                            <div class="half-width">{gettext("hrs. Individual")}</div>
-                            <input disabled={override || read_only} class="half-width" autocomplete="off" class="half-width" id="time-general-hours" type="number" value={data.time_general_hours} onChange={this.inputChanged.bind(this,"time_general_hours")}/>
-                            <div class="half-width">{gettext("hrs. General Education")}</div>
-                            <input disabled={override || read_only} class="half-width" autocomplete="off" class="half-width" id="time-specific-hours" type="number" value={data.time_specific_hours} onChange={this.inputChanged.bind(this,"time_specific_hours")}/>
-                            <div class="half-width">{gettext("hrs. Specific Education")}</div>
                         </div>
                     }
                     {type=="node" && data.node_type!=0 &&
@@ -211,30 +176,6 @@ export class EditableComponent extends Component{
                                 <input disabled={read_only} type="checkbox" name="is_published" checked={data.published} onChange={this.checkboxChanged.bind(this,"published")}/>
                             </div>
                             }
-                        </div>
-                    }
-                    {type=="week" && data.week_type <2 &&
-                        <div>
-                            <h4>{gettext("Strategy")}</h4>
-                            <select disabled={read_only} value={data.strategy_classification} onChange={this.inputChanged.bind(this,"strategy_classification")}>
-                                {this.props.renderer.strategy_classification_choices.map((choice)=>
-                                    <option value={choice.type}>{choice.name}</option>
-                                )}
-                            </select>
-                            <button disabled={read_only} id="toggle-strategy-editor" onClick = {()=>{
-                                let loader = new Constants.Loader('body');
-                                toggleStrategy(data.id,data.is_strategy,
-                                (response_data)=>{
-                                    loader.endLoad();
-                                })
-                            }}>
-                                {data.is_strategy &&
-                                    gettext("Remove Strategy Status")
-                                }
-                                {!data.is_strategy &&
-                                    gettext("Save as Template")
-                                }
-                            </button>
                         </div>
                     }
                     {sets}

@@ -202,17 +202,17 @@ class Column(models.Model):
     CUSTOM_PROGRAM = 20
 
     COLUMN_TYPES = (
-        (CUSTOM_ACTIVITY, _("Custom Activity Column")),
-        (OUT_OF_CLASS_INSTRUCTOR, _("Out of Class (Instructor)")),
-        (OUT_OF_CLASS_STUDENT, _("Out of Class (Students)")),
-        (IN_CLASS_INSTRUCTOR, _("In Class (Instructor)")),
-        (IN_CLASS_STUDENT, _("In Class (Students)")),
-        (CUSTOM_COURSE, _("Custom Course Column")),
-        (PREPARATION, _("Preparation")),
-        (LESSON, _("Lesson")),
-        (ARTIFACT, _("Artifact")),
-        (ASSESSMENT, _("Assessment")),
-        (CUSTOM_PROGRAM, _("Custom Program Category")),
+        (CUSTOM_ACTIVITY, _("Custom Category")),
+        (OUT_OF_CLASS_INSTRUCTOR, _("Preparation & Research")),
+        (OUT_OF_CLASS_STUDENT, _("Production")),
+        (IN_CLASS_INSTRUCTOR, _("Testing & Analytics")),
+        (IN_CLASS_STUDENT, _("Admin & Reporting")),
+        (CUSTOM_COURSE, _("Custom Category")),
+        (PREPARATION, _("Preparation & Research")),
+        (LESSON, _("Production")),
+        (ARTIFACT, _("Testing & Analytics")),
+        (ASSESSMENT, _("Admin & Reporting")),
+        (CUSTOM_PROGRAM, _("Custom Category")),
     )
     column_type = models.PositiveIntegerField(default=0, choices=COLUMN_TYPES)
 
@@ -917,8 +917,6 @@ class Workflow(models.Model):
     OUTCOME_SORTS = (
         (OUTCOME_SORT_WEEK, _("Time")),
         (OUTCOME_SORT_COLUMN, _("Category")),
-        (OUTCOME_SORT_TASK, _("Task")),
-        (OUTCOME_SORT_CONTEXT, _("Context")),
     )
     outcomes_sort = models.PositiveIntegerField(
         choices=OUTCOME_SORTS, default=0
@@ -2156,6 +2154,17 @@ def create_default_program_content(sender, instance, created, **kwargs):
         instance.condensed = True
         instance.save()
 
+
+@receiver(post_save, sender=Project)
+def auto_create_liveproject(sender, instance, created, **kwargs):
+    if created and instance.author is not None:
+        liveproject = LiveProject.objects.create(project=instance)
+        LiveProjectUser.objects.create(
+            liveproject=liveproject,
+            user=instance.author,
+            role_type=LiveProjectUser.ROLE_TEACHER,
+        )
+        
 
 @receiver(post_save, sender=Project)
 @receiver(post_save, sender=Workflow)

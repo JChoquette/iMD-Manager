@@ -2,7 +2,7 @@
 <!-- -->
 {% load static i18n %}
 <!-- -->
-{% block title %}{% trans "New Course" %} - CourseFlow{% endblock %}
+{% block title %}{% trans "New Course" %}{% endblock %}
 <!-- -->
 {% block metadescription %} {% endblock %}
 <!-- -->
@@ -12,7 +12,7 @@
 <div id="create">
     <div class="workflow-create-wrapper">
       <h1>
-        {% trans 'Create a course:' %}
+        {% trans 'Create a workflow:' %}
       </h1>
       <form method="post">
         {% csrf_token %} {{ form.as_p }}

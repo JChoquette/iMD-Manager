@@ -3,7 +3,6 @@ import * as reactDom from "react-dom";
 import {WorkflowTitle, AssignmentTitle, TitleText, ActionButton, DatePicker} from "./ComponentJSON";
 import {renderMessageBox,closeMessageBox} from "./MenuComponents";
 import {getAssignmentsForNode, deleteSelfLive, setAssignmentCompletion, addUsersToAssignment, updateLiveProjectValue,createAssignment, getAssignmentData, getAssignmentDataStudent, setWorkflowVisibility, getWorkflowNodes} from "./PostFunctions";
-import {StudentManagement} from "./StudentManagement";
 import {WorkflowVisibility} from "./LiveProjectView";
 import {reloadAssignmentsAction} from "./Reducers";
 import * as Constants from "./Constants";

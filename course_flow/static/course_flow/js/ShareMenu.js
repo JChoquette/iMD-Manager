@@ -87,7 +87,7 @@ export class ShareMenu extends React.Component{
             if(data.type=="project")public_disabled |= (data.disciplines.length==0);
             if(!public_disabled && !published)public_class+=" hover-shade";
             if(public_disabled)public_class+=" disabled";
-            let public_text=gettext("Any CourseFlow teacher can view");
+            let public_text=gettext("Any logged-in user can view");
             let disabled_indicator;
             if(public_disabled){
                 let disabled_text;
@@ -103,7 +103,7 @@ export class ShareMenu extends React.Component{
                 [<div class="big-buttons-wrapper">
                     <div class={public_class} disabled={public_disabled} onClick={this.setPublication.bind(this,true && !public_disabled)}>
                         <span class="material-symbols-rounded">public</span>
-                        <div class="big-button-title">{gettext("Public to CourseFlow")}</div>
+                        <div class="big-button-title">{gettext("Public")}</div>
                         <div class="big-button-description">{public_text}</div>
                     </div>
                     <div class={private_class} onClick={this.setPublication.bind(this,false)}>
@@ -120,8 +120,8 @@ export class ShareMenu extends React.Component{
                 <div class="big-buttons-wrapper">
                     <div class="big-button active">
                         <span class="material-symbols-rounded">public</span>
-                        <div class="big-button-title">{gettext("Project public to CourseFlow")}</div>
-                        <div class="big-button-description">{gettext("Any CourseFlow teacher can view")}</div>
+                        <div class="big-button-title">{gettext("Project public")}</div>
+                        <div class="big-button-description">{gettext("Any logged-in user can view")}</div>
                     </div>
                 </div>
             );

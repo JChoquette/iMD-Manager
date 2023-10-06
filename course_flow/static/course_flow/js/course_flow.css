@@ -1,5 +1,5 @@
 :root {
-  --mdc-theme-primary: #04ba74;
+  --mdc-theme-primary: #00d2b5;
   --mdc-theme-secondary: #46c443;
 }
 
@@ -20,7 +20,7 @@ hr{
 }
 
 h1{
-    color:#04ba74;
+    color:#00d2b5;
     
 }
 
@@ -30,7 +30,7 @@ h2{
 }
 
 h3{
-    /*color:#04ba74;*/
+    /*color:#00d2b5;*/
     color: #444444;
 }
 
@@ -39,12 +39,12 @@ h4{
     margin-bottom:5px;
     color: #444444;
     font-weight: 600;
-    /*color:#04ba74;*/
+    /*color:#00d2b5;*/
 }
 h5{
     margin-top:8px;
     margin-bottom:8px;
-    color:#04ba74;
+    color:#00d2b5;
 }
 
 h4.drag-and-drop::after, h3.drag-and-drop::after{
@@ -141,7 +141,7 @@ button{
 }
 
 .primary-button{
-    background: #04BA74;
+    background: #00d2b5;
     color: white;
     padding: 8px;
     box-sizing: border-box;
@@ -157,7 +157,7 @@ button{
 }
 
 .primary-button.disabled, .primary-button:disabled, .secondary-button.disabled, .secondary-button:disabled{
-    background: #04BA74;
+    background: #00d2b5;
     color: grey;
     background: #E9EBF2;
 }
@@ -203,7 +203,7 @@ button:hover{
 }
 
 .material-symbols-rounded.green, .material-symbols-outlined.green{
-    color: #04ba74;
+    color: #00d2b5;
 }
 
 .material-symbols-rounded.red, .material-symbols-outlined.red{
@@ -294,7 +294,7 @@ button:hover{
 
 #update-notifications{
     position: relative;
-    background: #EEFFF8;
+    background: #f0fefe;
     margin: 0px 15px 15px 15px;
 }
 
@@ -326,7 +326,7 @@ button:hover{
     width:100%;
     font-family:'Open Sans',sans-serif;
     align-items: center;
-    background: #EEFFF8;
+    background: #f0fefe;
     box-sizing: border-box;
 }
 
@@ -391,7 +391,7 @@ button:hover{
 
 #visible-icons{
     display: flex;
-    color: #04BA74;
+    color: #00d2b5;
     gap: 20px;
 }
 
@@ -645,7 +645,7 @@ button:hover{
 .left-panel-toggle{
     width: 24px;
     height: 24px;
-    background: #04ba74;
+    background: #00d2b5;
     border-radius: 50%;
     position: absolute;
     right: -10px;
@@ -699,10 +699,10 @@ button:hover{
 }
 
 .panel-item.active{
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 .panel-favourite.active{
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 
 .panel-item > img, .panel-item .material-symbols-rounded{
@@ -815,8 +815,8 @@ button:hover{
 }
 
 .home-tabs .ui-tabs-active{
-    background:#04ba74;
-    border:1px solid #04ba74;
+    background:#00d2b5;
+    border:1px solid #00d2b5;
     color:white;
 }
 
@@ -842,7 +842,7 @@ button:hover{
 
 .menu-create{
     padding:8px;
-    background:#04ba74;
+    background:#00d2b5;
     color:white;
     display:block;
     border-radius:5px;
@@ -886,7 +886,7 @@ button:hover{
     height: 16px;
     width: 16px;
     border-radius: 12px;
-    background-color: #04BA74;
+    background-color: #00d2b5;
     color: white;
     font-size: 10px;
     line-height: 16px;
@@ -1077,7 +1077,7 @@ button:hover{
 }
 
 .workflow-type-indicator.program{
-    /*background-color:#04ba74;*/
+    /*background-color:#00d2b5;*/
     background-color:#327B77;
 }
 
@@ -1182,7 +1182,7 @@ button:hover{
 }
 
 .filter-option.active{
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 
 .user-add .search-input{
@@ -1226,7 +1226,7 @@ button:hover{
     gap: 5px;
 }
 .workflow-filter-sort .workflow-sort-indicator:not(.item-0){
-    background: #EEFFF8;
+    background: #f0fefe;
 }
 
 .project-header{
@@ -1319,8 +1319,8 @@ button:hover{
 }
 
 .explore-menu input:checked+label.input{
-    background:#eefff8;
-    border:1px solid #04ba74;
+    background:#f0fefe;
+    border:1px solid #00d2b5;
 }
 
 .explore-menu .explore-preview{
@@ -1351,9 +1351,9 @@ button:hover{
 }
 
 .explore-page-buttons .active-page-button{
-    background:#04ba74;
+    background:#00d2b5;
     color:white;
-    border: 1px solid #04ba74;
+    border: 1px solid #00d2b5;
 }
 
 .flex-wrap{
@@ -1470,7 +1470,7 @@ button:hover{
 .big-button > .material-symbols-rounded{
     display: block;
     font-size: 36px;
-    color: #04BA74;
+    color: #00d2b5;
 }
 
 .big-button-title{
@@ -1485,13 +1485,13 @@ button:hover{
 }
 
 .big-button.active{
-    background: #EEFFF8;
-    border: 1px solid #04BA74;
+    background: #f0fefe;
+    border: 1px solid #00d2b5;
 }
 
 .public-link-button{
     border-radius: 10px;
-    background: #04BA74;
+    background: #00d2b5;
     width: 100%;
     color: white;
     display: flex;
@@ -1880,7 +1880,7 @@ text {
 .splash-image-wrapper div{
     padding:10px;
     font-size:20px;
-    color:#04ba74;
+    color:#00d2b5;
     white-space:nowrap;
 }
 
@@ -1980,7 +1980,7 @@ p{
 }
 
 button, input[type="submit"]{
-    border:2px outset #04ba74;
+    border:2px outset #00d2b5;
     background:white;
     padding:5px;
     border-radius:5px;
@@ -2113,9 +2113,9 @@ button, input[type="submit"]{
 }
 
 .workflow-view-select .active{
-    background:#04ba74;
+    background:#00d2b5;
     color:white;
-    border:1px solid #04ba74;
+    border:1px solid #00d2b5;
 }
 
 .workflow-view-select .disabled{
@@ -2624,7 +2624,7 @@ li.outcome-outcome::before{
     display:block;
     width:10px;
     height:0;
-    border-top:2px solid #04ba74;
+    border-top:2px solid #00d2b5;
     margin-top:-2px;
     position:absolute;
     top:15px;
@@ -2664,7 +2664,7 @@ ol.children-block{
 .outcome-create-child{
     position:relative;
     font-size:12px;
-    color:#04ba74;
+    color:#00d2b5;
     margin-left:40px;
     display:none;
     cursor:pointer;
@@ -2675,8 +2675,8 @@ ol.children-block{
     display:block;
     width:10px;
     height:6px;
-    border-bottom:2px solid #04ba74;
-    border-left:2px solid #04ba74;
+    border-bottom:2px solid #00d2b5;
+    border-left:2px solid #00d2b5;
     position:absolute;
     top:0px;
     left:-20px;
@@ -2688,7 +2688,7 @@ ol.children-block{
 }
 
 .children-block{
-    border-left:2px solid #04ba74;
+    border-left:2px solid #00d2b5;
     margin-left:20px;
     margin-top:0px;
     margin-bottom:0px;
@@ -2713,7 +2713,7 @@ ol.children-block{
 
 .outcome-drop-text{
     font-size:10px;
-    color:#04ba74;
+    color:#00d2b5;
     display:inline-block;
     margin-left:10px;
     vertical-align:top;
@@ -2752,7 +2752,7 @@ ol.children-block{
 }
 
 .restore-bar-item{
-    border:2px solid #04ba74;
+    border:2px solid #00d2b5;
     border-radius:5px;
     padding:5px;
 }
@@ -2777,7 +2777,7 @@ ol.children-block{
 }
 
 .outcome-bar-outcome-block > div > .outcome, .outcome-bar-outcome-block .parent-outcome-node > .outcome{
-    border: 1px solid #04ba74;
+    border: 1px solid #00d2b5;
     border-radius: 5px;
     margin-bottom: 2px;
 }
@@ -3320,7 +3320,7 @@ ol.children-block{
 }
 
 .outcome-table.node-rows .outcome .outcome .outcome-head{
-    border-left:2px solid #04ba74;
+    border-left:2px solid #00d2b5;
 }
 
 .outcome-row{
@@ -3497,7 +3497,7 @@ ol.children-block{
 
 
 input:checked + .slider{
-    background-color:#04ba74;
+    background-color:#00d2b5;
 }
 
 input:checked +.slider::before{
@@ -3554,7 +3554,7 @@ div:hover > .mouseover-actions,div:hover > .mouseover-container-bypass > .mouseo
     position:absolute;
     width:300px;
     max-height:400px;
-    border:1px solid #04ba74;
+    border:1px solid #00d2b5;
     background:white;
     z-index:7;
     overflow: overlay;
@@ -3820,7 +3820,7 @@ circle.mouseover{
     padding: 6px;
     box-sizing: border-box;
     box-shadow: 0px 4px 4px 2px #e6e6e6;
-    color: #04ba74;
+    color: #00d2b5;
 }
 
 .side-bar .ui-tabs-tab.ui-state-disabled{
@@ -3848,7 +3848,7 @@ circle.mouseover{
 
 .side-bar .ui-tabs-tab.ui-tabs-active{
     color: white;
-    background: #04ba74;
+    background: #00d2b5;
 }
 
 
@@ -3984,19 +3984,19 @@ circle.mouseover{
 }
 
 .new-node-drop-over{
-    border-bottom:2px solid #04ba74;
+    border-bottom:2px solid #00d2b5;
 }
 
 .outcome-drop-over{
-    border:2px solid #04ba74;
+    border:2px solid #00d2b5;
 }
 
 .new-strategy-drop-over{
-    border-bottom:2px solid #04ba74;
+    border-bottom:2px solid #00d2b5;
 }
 
 .valid-drop{
-    outline:2px solid #04ba74;
+    outline:2px solid #00d2b5;
 }
 
 .node-bar-week{
@@ -4039,12 +4039,12 @@ circle.mouseover{
 }
 
 .workflow-wrapper .selected{
-    border-color:#04ba74;
+    border-color:#00d2b5;
     border-style:solid;
 }
 
 .workflow-wrapper .nodelink.selected{
-    stroke:#04ba74;
+    stroke:#00d2b5;
     opacity:1;
     stroke-width:5px;
 }
@@ -4055,7 +4055,7 @@ circle.mouseover{
 }
 
 .workflow-for-menu.selected{
-    border-color:#04ba74;
+    border-color:#00d2b5;
 }
 
 .alignment-block{
@@ -4152,7 +4152,7 @@ circle.mouseover{
 }
 
 .alignment-show-all{
-    color:#04ba74;
+    color:#00d2b5;
     cursor:pointer;
 }
 
@@ -4237,7 +4237,7 @@ circle.mouseover{
     background:white;
     z-index:5;
     padding:20px;
-    border:2px solid #04ba74;
+    border:2px solid #00d2b5;
     left:calc(100% - 460px);
     box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.3);
 }
@@ -4361,7 +4361,7 @@ circle.mouseover{
 
 /*
 .workflow-legend *:is(h4, h5), .right-panel-container *:is(h3, h4, h5){
-    color:#04ba74;
+    color:#00d2b5;
 }
 */
 .selectable{
@@ -4388,8 +4388,8 @@ circle.mouseover{
     content:"";
     border-radius:50%;
     border:16px solid #80808010;
-    border-top:16px solid #04ba74;
-    border-bottom:16px solid #04ba74;
+    border-top:16px solid #00d2b5;
+    border-bottom:16px solid #00d2b5;
     animation: spin 2s linear infinite;
     -webkit-animation: spin 2s linear infinite;
 }

@@ -260,7 +260,7 @@ export const getSortedOutcomesFromOutcomeWorkflowSet = (state,outcomeworkflow_se
         outcomes[i].through_no_drag=outcomeworkflows[i].no_drag;
     };
     if(outcomes.length==0)return outcomes;
-    let base_title = Constants.capWords(gettext("outcomes"));
+    let base_title = gettext("KPI");
     let object_sets = state.objectset.filter(objectset=>objectset.term==outcomes[0].type);
     if(object_sets.length==0)return [{objectset:{title:base_title},outcomes:outcomes}];
     let uncategorized = outcomes.filter(outcome=>outcome.sets.length==0)
